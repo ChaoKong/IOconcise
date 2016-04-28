@@ -240,7 +240,7 @@ public class MyService extends IntentService  {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//Log.d("test Type in service", String.valueOf(TestType));
+				Log.d("test Type in service", String.valueOf(TestType));
 				if (TestType==1)
 				{
 					ProcessLight(tmp_test, TestType);
@@ -260,7 +260,7 @@ public class MyService extends IntentService  {
 					}
 				}
 				
-				//Log.d("ground truth in active test", Ground_truth.toString());
+				Log.d("ground truth in active test", Ground_truth.toString());
 				
             	Intent i = new Intent("ActiveTestResult");
 	
@@ -298,11 +298,11 @@ public class MyService extends IntentService  {
 
     	if (audio_in_use == 0)
     	{
-    		//Log.d("process light", "process light");
+    		Log.d("process light", "process light");
     		ProcessLight(tmp_call,0);
     	}
     	if (audio_in_use == 1)
-    	{	//Log.d("process audio", "process audio");
+    	{	Log.d("process audio", "process audio");
     		ProcessAudio(testType);
     	}    	
     }

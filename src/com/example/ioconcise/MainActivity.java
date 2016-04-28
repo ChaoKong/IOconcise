@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
 	int LocationFlag = 0;
 	int StartTransmit = 0;
 	String location_global ="";
-	public Thread LocationThread = null;
+	public Thread TestThread = null;
 	public int LocationThreadstart = 0;
     public long start_location_time = 0;
     public long stop_location_time = 0;
@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
     
     public int RGBAvailabe = 0;
     
-    public int isS6 = 0;
+    public int isS6 = 1;
     public int Previous_volume = 10;
     
     StringBuilder finalString = null;
@@ -224,6 +224,10 @@ public class MainActivity extends Activity {
     public int Result_TestType = 0;
     public int runAudioTest=0;
     //   1 : light test;  2: Audio test; 3: All test;
+    
+    public int runTimes = 200;
+    
+    public int finishTest = 0;
 	
 	
 
@@ -250,7 +254,7 @@ public class MainActivity extends Activity {
 		Groundtruthfile_str = dir+"/GroundTruthFile.txt";
 		
 
-		final int[] mFiles = new int[] { R.raw.light_model6, R.raw.light_range_set6, R.raw.audio_model2, R.raw.audio_range2, R.raw.chirp14_file };
+		final int[] mFiles = new int[] { R.raw.light_model6, R.raw.light_range_set6, R.raw.audio_model4, R.raw.audio_range4, R.raw.chirp14_file };
 		final CharSequence[] filenames = { "model_light", "range_light", "model_audio", "range_audio", "chirp_file" };
 		for (int i = 0; i < mFiles.length; i++) {
 			try {
@@ -380,6 +384,7 @@ public class MainActivity extends Activity {
 		
 						calculate_mode2 = Result2.getInt("mode");
 						printResults(result2_Str, 2, calculate_mode2,Result_TestType);}
+
 					
 
 				} catch (JSONException e) {
@@ -595,7 +600,7 @@ public class MainActivity extends Activity {
     	}
     	
     	TestObject = new JSONObject();
-    	//Log.i(TAG, "init successfully");
+    	Log.i(TAG, "init successfully");
     }
     
     
@@ -605,36 +610,77 @@ public class MainActivity extends Activity {
 		Button AudioTestBtn=(Button) findViewById(R.id.Audio_switch);
 		
 
-		init();
-		
-		TestType = 2;
-		
-		registerProxiSensor();
+		runTimes = 200;
 
-		if (isS6!=1){
-			AudioTestBtn.setText("Audio test not supported");
-		}
-		else
-		{
-			AudioTestBtn.setText("Audio test");
-		}
+
+		new Thread(){
+			public void run(){
+				for (int i = 0; i< runTimes; i++) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					init();
+
+					TestType = 2;
+
+					registerProxiSensor();
+
+//					AllTestBtn.setText("Light and Audio test");
+					
+					try {
+						Thread.sleep(4000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			
+		}.start();
 	} 
 	
 	
 	boolean isLightTest = false;
 
 	public void LightSwitch(View view) throws IOException {
-		Button LightTestBtn=(Button) findViewById(R.id.Light_switch);		
+		Button LightTestBtn=(Button) findViewById(R.id.Light_switch);	
 		
-		init();
-		
-		TestType = 1;
-		
-		registerProxiSensor();
+		runTimes = 200;
+		new Thread(){
+			public void run(){
+				for (int i = 0; i< runTimes; i++) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-		LightTestBtn.setText("light test");
+					init();
 
-	
+					TestType = 1;
+
+					registerProxiSensor();
+
+//					AllTestBtn.setText("Light and Audio test");
+					
+					try {
+						Thread.sleep(4000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			
+		}.start();
+
 	}
 	
 	
@@ -674,13 +720,36 @@ public class MainActivity extends Activity {
 	public void AllSwitch(View view) throws IOException {
 		Button AllTestBtn=(Button) findViewById(R.id.All_switch);
 		
-		init();
-		
-		TestType = 3;
-		
-		registerProxiSensor();
+		runTimes = 200;
+		new Thread(){
+			public void run(){
+				for (int i = 0; i< runTimes; i++) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-		AllTestBtn.setText("Light and Audio test");
+					init();
+
+					TestType = 3;
+
+					registerProxiSensor();
+
+//					AllTestBtn.setText("Light and Audio test");
+					
+					try {
+						Thread.sleep(4000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			
+		}.start();
 
 	} 
     
@@ -788,6 +857,8 @@ public class MainActivity extends Activity {
 				} catch(Exception e)
 				{
 				}
+				
+				Log.d("register proximity sensor", "register proximity sensor");
 			}
 			mySensorManager.registerListener(ProxiSensorListener, ProxiSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		}		
@@ -977,11 +1048,11 @@ public class MainActivity extends Activity {
     					
     				String Light_RGB_Wifi = String.valueOf(Light_Sum)+" "+String.valueOf(R_Sum)+" "+String.valueOf(G_Sum)+" "+String.valueOf(B_Sum)+" "+String.valueOf(W_Sum)+" "+String.valueOf(Wifi_Sum);
     				   
-    				//Log.d("get Ave info","get Ave info");
+    				Log.d("get Ave info","get Ave info");
              
                     sendFinalJSON(TestType,Light_RGB_Wifi,Audio_flag);	
                     unregisterLightSensor();
-                    //Log.d("unregister light sensor", "unregister light");
+                    Log.d("unregister light sensor", "unregister light");
     			 					
     			}
 
@@ -1056,7 +1127,7 @@ public class MainActivity extends Activity {
 
 				if (RecordFlag==1) {
 					String Light_RGB_Wifi = String.valueOf(lightvalue) +" "+finalString.toString()+" "+String.valueOf(Wifi_RSSI);
-					//Log.d("Light RGB wifi", Light_RGB_Wifi);
+					Log.d("Light RGB wifi", Light_RGB_Wifi);
 					writeJSON(outwriterAllInfo,timeSta,"rawData",Light_RGB_Wifi);
 					
 					//Log.d("call add","calladd");
@@ -1083,18 +1154,18 @@ public class MainActivity extends Activity {
     			
     			proxi_time = System.currentTimeMillis();
     			cur_proxi_time = proxi_time;
-    			stop_proxi_time = proxi_time + 100;
-    			stop_proxi_time_end = cur_proxi_time + 100;
+    			stop_proxi_time = proxi_time + 10;
+    			stop_proxi_time_end = cur_proxi_time + 10;
     			String curTimeStr = ""+proxi_time+";   ";
     			ReadProxi = event.values[0];
     			
-//    			Log.d("proxi count",String.valueOf(proxi_count));
-//    			Log.d("proxi value", String.valueOf(ReadProxi));
-//    			Log.d("proxi time",String.valueOf(proxi_time));
-//    			Log.d("cur proxi time",String.valueOf(cur_proxi_time));
-//    			Log.d("stop_proxi_time_end",String.valueOf(stop_proxi_time_end));
-//    			Log.d("stop_proxi_time",String.valueOf(stop_proxi_time));
-//    			Log.d("RecordFlag",String.valueOf(RecordFlag));
+    			Log.d("proxi count",String.valueOf(proxi_count));
+    			Log.d("proxi value", String.valueOf(ReadProxi));
+    			Log.d("proxi time",String.valueOf(proxi_time));
+    			Log.d("cur proxi time",String.valueOf(cur_proxi_time));
+    			Log.d("stop_proxi_time_end",String.valueOf(stop_proxi_time_end));
+    			Log.d("stop_proxi_time",String.valueOf(stop_proxi_time));
+    			Log.d("RecordFlag",String.valueOf(RecordFlag));
     			
     			
 				if (proxiThread!= null)
@@ -1129,85 +1200,136 @@ public class MainActivity extends Activity {
         					
         				}
 						if (RecordFlag == 0) {
-			    			if (proxi_thread_start ==0)
-			    			{
-			    				proxi_thread_start = 1;
-			    				//Log.d("start proxithread","first start proxithread");
-			    				proxiThread = new Thread() {
+							
+    						RecordFlag = 1;
+    						//Log.d("RecordFlag in thread",String.valueOf(RecordFlag));
+    						unregisterProxiSensor();
+    						
+    						if (TestType == 1) {
+    							if (register_light == 0) {
+    								register_light = 1;
+    								//Log.d("register light in test type 1","register light in first thread");
+    								registerLightSensor();
 
-			    					public void run() {
-			    						while(!Thread.interrupted())
-			    					    {
-				    						while (RecordFlag==0 )
-				    						{
-				    							if ((cur_proxi_time > stop_proxi_time_end) && (ReadProxi>1))
-				    							{
+    							}
+    						}
+    						
+    						if ((TestType ==2) && (isS6==1)){
+    							if (runAudioTest==0){
+    								runAudioTest=1;
+    								runAudiotest();	
+    								Log.d("run audio test in type 2","run audio test in type 2");
+    								String tmp_Light_RGB_Wifi = "0 0 0 0 0 0";
+    								sendFinalJSON(TestType,tmp_Light_RGB_Wifi,Audio_flag);
+    							}
+    						}
+    						
+    						if (TestType ==3){
+    							
+
+    							if (isS6==1)
+    							{
+    								if (runAudioTest==0){
+    									
+	    								runAudiotest();
+	    								runAudioTest=1;
+	    								Log.d("run audio test in type 3","run audio test in type 3");
+    								}
+
+    							}
+    							else
+    							{
+    								Audio_flag = 0;
+    							}
+    							
+    							if (register_light == 0) {
+    								register_light = 1;
+    								Log.d("register light in test type 3","register light in test type 3");
+    								registerLightSensor();
+    							}
+    						}
+//			    			if (proxi_thread_start ==0)
+//			    			{
+//			    				proxi_thread_start = 1;
+//			    				//Log.d("start proxithread","first start proxithread");
+//			    				proxiThread = new Thread() {
+//
+//			    					public void run() {
+//			    						while(!Thread.interrupted())
+//			    					    {
+//				    						while (RecordFlag==0 )
+//				    						{
+//				    							if ((cur_proxi_time > stop_proxi_time_end) && (ReadProxi>1))
+//				    							{
 //					    							Log.d("cur proxi time in EndingCallFlag 1", String.valueOf(cur_proxi_time));
 //					    							Log.d("stop_proxi_time end in EndingCallFlag 1", String.valueOf(stop_proxi_time_end));
 //					    							Log.d("readProxi",String.valueOf(ReadProxi));
-				    								break;
-				    							}
-				    							cur_proxi_time = System.currentTimeMillis();
-//				    							Log.d("cur proxi time in thread", String.valueOf(cur_proxi_time));
-//				    							Log.d("stop_proxi_time in thread", String.valueOf(stop_proxi_time));
-				    						
-				    						}
-
-				    						RecordFlag = 1;
-				    						//Log.d("RecordFlag in thread",String.valueOf(RecordFlag));
-				    						unregisterProxiSensor();
-				    						
-				    						if (TestType == 1) {
-				    							if (register_light == 0) {
-				    								register_light = 1;
-				    								//Log.d("register light in test type 1","register light in first thread");
-				    								registerLightSensor();
-
-				    							}
-				    						}
-				    						
-				    						if ((TestType ==2) && (isS6==1)){
-				    							if (runAudioTest==0){
-				    								runAudioTest=1;
-				    								runAudiotest();	
-				    								//Log.d("run audio test in type 2","run audio test in type 2");
-				    								String tmp_Light_RGB_Wifi = "0 0 0 0 0 0";
-				    								sendFinalJSON(TestType,tmp_Light_RGB_Wifi,Audio_flag);
-				    							}
-				    						}
-				    						
-				    						if (TestType ==3){
-				    							
-				    							if (register_light == 0) {
-				    								register_light = 1;
-				    								//Log.d("register light in test type 3","register light in test type 3");
-				    								registerLightSensor();
-				    							}
-				    							if (isS6==1)
-				    							{
-				    								if (runAudioTest==0){
-				    									runAudioTest=1;
-					    								runAudiotest();
-					    								//Log.d("run audio test in type 3","run audio test in type 3");
-				    								}
-
-				    							}
-				    							else
-				    							{
-				    								Audio_flag = 0;
-				    							}
-				    						}
-				    						
-				    						
-				    						Thread.currentThread().interrupt();
-				    						return;
-
-			    					    }
-
-			    					}
-			    				};
-			    				proxiThread.start();
-			    			}							
+//				    								break;
+//				    							}
+//				    							cur_proxi_time = System.currentTimeMillis();
+////				    							Log.d("cur proxi time in thread", String.valueOf(cur_proxi_time));
+////				    							Log.d("stop_proxi_time in thread", String.valueOf(stop_proxi_time));
+//				    						
+//				    						}
+//
+//				    						RecordFlag = 1;
+//				    						//Log.d("RecordFlag in thread",String.valueOf(RecordFlag));
+//				    						unregisterProxiSensor();
+//				    						
+//				    						if (TestType == 1) {
+//				    							if (register_light == 0) {
+//				    								register_light = 1;
+//				    								//Log.d("register light in test type 1","register light in first thread");
+//				    								registerLightSensor();
+//
+//				    							}
+//				    						}
+//				    						
+//				    						if ((TestType ==2) && (isS6==1)){
+//				    							if (runAudioTest==0){
+//				    								runAudioTest=1;
+//				    								runAudiotest();	
+//				    								Log.d("run audio test in type 2","run audio test in type 2");
+//				    								String tmp_Light_RGB_Wifi = "0 0 0 0 0 0";
+//				    								sendFinalJSON(TestType,tmp_Light_RGB_Wifi,Audio_flag);
+//				    							}
+//				    						}
+//				    						
+//				    						if (TestType ==3){
+//				    							
+//
+//				    							if (isS6==1)
+//				    							{
+//				    								if (runAudioTest==0){
+//				    									
+//					    								runAudiotest();
+//					    								runAudioTest=1;
+//					    								Log.d("run audio test in type 3","run audio test in type 3");
+//				    								}
+//
+//				    							}
+//				    							else
+//				    							{
+//				    								Audio_flag = 0;
+//				    							}
+//				    							
+//				    							if (register_light == 0) {
+//				    								register_light = 1;
+//				    								Log.d("register light in test type 3","register light in test type 3");
+//				    								registerLightSensor();
+//				    							}
+//				    						}
+//				    						
+//				    						
+//				    						Thread.currentThread().interrupt();
+//				    						return;
+//
+//			    					    }
+//
+//			    					}
+//			    				};
+//			    				proxiThread.start();
+//			    			}							
 						}
         			}
         			
